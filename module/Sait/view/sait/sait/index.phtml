@@ -1,0 +1,14 @@
+<div>
+	<h3>Категории</h3>
+	<ul>
+		<?php
+		foreach($categorys as $category) {
+			echo "<li><span style='color: darkgreen;'>$category->title</span> => <span style='color: darkblue;'>$category->url</span></li><a href='/parsecat/$category->id'> Парсить</a> ";
+		}
+		?>
+	</ul>
+</div>
+
+
+<?php
+?>

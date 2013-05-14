@@ -1,0 +1,22 @@
+<?php
+if(isset($msg)){
+	echo $msg . '<br>';
+	if(isset($sStartTime))
+	{
+		echo '<br> Время работы - ' . (time() - $sStartTime) . ' сек. <br>';
+	}
+
+	$form = $this->form;
+	$form->setAttribute('action', $this->url('sait', array('action' => 'parsecat')));
+	$form->prepare();
+
+	echo $this->form()->openTag($form);
+	echo $this->formHidden($form->get('id'));
+	echo $this->formSubmit($form->get('submit'));
+	echo $this->form()->closeTag();
+} else {
+	if(isset($sStartTime))
+	{
+		echo '<br> Время работы - ' . (time() - $sStartTime) . ' сек. <br>';
+	}
+}
