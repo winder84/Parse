@@ -6,7 +6,6 @@ if(isset($msg)){
 		echo '<br> Время работы - ' . (time() - $sStartTime) . ' сек. <br>';
 	}
 
-	$form = $this->form;
 	$form->setAttribute('action', $this->url('sait', array('action' => 'parsecat')));
 	$form->prepare();
 

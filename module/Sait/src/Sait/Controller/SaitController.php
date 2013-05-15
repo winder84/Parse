@@ -70,8 +70,13 @@ class SaitController extends AbstractActionController
 
 		if ($request->isPost()) {
 			if($request->getPost()->submit == "Парсить") {
-				echo 1;die;
-				$id = (int) $this->params()->fromRoute('id');
+				if(isset($_REQUEST['id']))
+				{
+					$id = (int) $_REQUEST['id'];
+				} else
+				{
+					$id = (int) $this->params()->fromRoute('id');
+				}
 				$category = $this->getSaitTable()->getAllByVal('category',array('id' => $id));
 				foreach($category as $cat) {
 					$sUrl = $cat['url'];
@@ -98,15 +103,15 @@ class SaitController extends AbstractActionController
 				}
 
 				$aAllUrls[] = $aUrls[0];
-				for($i=10;$i<=10;$i+=10)
+				for($i=10;$i<=$iCount;$i+=10)
 				{
 					sleep(2);
 					$sUrl = str_replace('BPOS=0','BPOS=' . $i,$sUrl);
 					if($sCategoryContent = file_get_contents($sUrl)) {
-						$logger->log(Logger::INFO, "Парсинг категории ($i/10 стр.) прошел успешно");
+						$logger->log(Logger::INFO, "Парсинг категории (" . $i/10 . " из " . $iCount/10 . " стр.) прошел успешно");
 						echo "<br>Парсинг категории ($i/10 стр.) прошел успешно<br>";
 					} else {
-						$logger->log(Logger::INFO, "Парсинг категории ($i/10 стр.) провалился");
+						$logger->log(Logger::INFO, "Парсинг категории (" . $i/10 . " из " . $iCount/10 . " стр.) провалился");
 						return new viewModel(array(
 							'msg' => "<br>Парсинг категории ($i/10 стр.) провалился<br>",
 							'sStartTime' => $sStartTime,
@@ -138,7 +143,7 @@ class SaitController extends AbstractActionController
 						$sImgUrl = 'http://mdata.yandex.net/i?path=' . $aUrls[0];
 						if(!file_exists($_SERVER['DOCUMENT_ROOT'] . '/img/products/' . $aUrls[0]))
 						{
-							if(file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/img/products/' . $aUrls[0], file_get_contents($sImgUrl))) {
+							if(file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/img/products/' . $aUrls[0], file_get_contents($sImgUrl)) !== false) {
 								$logger->log(Logger::INFO, "Парсинг картинки продукта (id = $sId) прошел успешно");
 								echo "Парсинг картинки продукта (id = $sId) прошел успешно<br>";
 							} else {
@@ -196,8 +201,10 @@ class SaitController extends AbstractActionController
 					'sStartTime' => $sStartTime,
 				));
 			} else {
+				$id = (int) $this->params()->fromRoute('id');
 				$form = new ParserForm();
-				$form->get('submit')->setValue('Парсить');
+				$form->get('id')->setAttribute('value', $id);
+				$form->get('submit')->setAttribute('value', 'Парсить');
 				$logger->log(Logger::INFO, 'Данные из БД не получены');
 				return new viewModel(array(
 					'msg' => 'Данные из БД не получены<br>',
